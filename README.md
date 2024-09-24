@@ -16,14 +16,14 @@ The Actix server can be found at `localhost:8080`.
 
 **Try out the endpoint**\
 Make a `POST` request at `localhost:8080/query`  a **prompt**.
-```JSON
-// body
+```json
+# body
 {
     "prompt": "QUESTION: What is 4 + 5?\nPlease answer this QUESTION under 50 words."
 }
 ```
-```JSON
-// response
+```json
+# response
 {
     "text": "ANSWER: The sum of 4 and 5 is 9."
 }
