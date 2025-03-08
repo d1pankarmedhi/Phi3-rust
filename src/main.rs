@@ -1,7 +1,7 @@
 mod model;
 use actix_web::{
-    body::BoxBody, get, http::header::ContentType, post, web, App, Error, HttpRequest,
-    HttpResponse, HttpServer, Responder,
+    body::BoxBody, get, http::header::ContentType, web, App, HttpRequest, HttpResponse, HttpServer,
+    Responder,
 };
 use model::generation::Inference;
 use serde::{Deserialize, Serialize};
@@ -26,8 +26,7 @@ impl Responder for QueryResponse {
     }
 }
 async fn query(query: web::Json<UserQuery>) -> impl Responder {
-    let response =
-        Inference::run(&query.prompt).unwrap_or("Error: Failed to run model".to_string());
+    let response = Inference::run(&query.prompt).unwrap();
     QueryResponse { text: response }
 }
 

@@ -5,6 +5,7 @@ use candle_core::{DType, Device, IndexOp, Tensor};
 use candle_nn::VarBuilder;
 use candle_transformers::generation::LogitsProcessor;
 use candle_transformers::models::phi3::{Config as Phi3Config, Model as Phi3};
+use hf_hub::api::sync::ApiBuilder;
 use hf_hub::{api::sync::Api, Repo, RepoType};
 use std::io::Write;
 use tokenizers::Tokenizer;
@@ -59,7 +60,7 @@ impl TextGeneration {
         if self.verbose_prompt {
             for (token, id) in tokens.get_tokens().iter().zip(tokens.get_ids().iter()) {
                 let token = token.replace('▁', " ").replace("<0x0A>", "\n");
-                println!("{id:7} -> '{token}'");
+                // println!("{id:7} -> '{token}'");
             }
         }
         let mut tokens = tokens.get_ids().to_vec();
@@ -154,12 +155,16 @@ impl Inference {
         );
 
         // Load model
-        let api = Api::new()?;
+        let api = ApiBuilder::new()
+            .with_token(Some(std::env::var("HF_TOKEN")?)) // From environment variable
+            .build()
+            .unwrap();
         let model_id = "microsoft/Phi-3-mini-4k-instruct".to_string();
         let revision = "main".to_string();
+
         let repo = api.repo(Repo::with_revision(model_id, RepoType::Model, revision));
-        let tokenizer_filename = repo.get("tokenizer.json")?;
-        let filenames = hub_load_safetensors(&repo, "model.safetensors.index.json")?;
+        let tokenizer_filename = repo.get("tokenizer.json").unwrap();
+        let filenames = hub_load_safetensors(&repo, "model.safetensors.index.json").unwrap();
         println!("INFO: Model retrieved!");
 
         let tokenizer = Tokenizer::from_file(tokenizer_filename).map_err(E::msg)?;

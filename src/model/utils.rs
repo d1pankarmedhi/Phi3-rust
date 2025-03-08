@@ -1,5 +1,5 @@
 use candle_core::utils::{cuda_is_available, metal_is_available};
-use candle_core::{Device, Result, Tensor};
+use candle_core::{Device, Result};
 
 /// This is a wrapper around a tokenizer to ensure that tokens can be returned to the user in a
 /// streaming way rather than having to wait for the full decoding.
